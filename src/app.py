@@ -11,6 +11,7 @@ from components.correlation import render_correlation
 from components.missing_values import render_missing_values
 from components.outlier_detection import render_outlier_dashboard
 from services.data_profiler import get_dataset_summary
+from components.data_cleaning import render_data_cleaning
 
 
 st.set_page_config(
@@ -43,3 +44,4 @@ if df is not None:
     render_missing_values(df)
 
     render_outlier_dashboard(df)
+    cleaned_df = render_data_cleaning(df)
