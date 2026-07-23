@@ -77,3 +77,4 @@ def render_column_explorer(df: pd.DataFrame):
         st.dataframe(
             column.value_counts().head(5)
         )
+    return selected_column
