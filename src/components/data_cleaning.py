@@ -33,7 +33,10 @@ def render_data_cleaning(df: pd.DataFrame):
         int(duplicate_rows)
     )
 
-    remove_duplicates = st.checkbox("Remove duplicate rows")
+    remove_duplicates = st.checkbox(
+    "Remove duplicate rows",
+    key="remove_duplicates_checkbox"
+)
 
     if remove_duplicates:
 
