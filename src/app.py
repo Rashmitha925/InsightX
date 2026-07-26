@@ -18,6 +18,7 @@ from components.data_cleaning import render_data_cleaning
 from components.feature_engineering import render_feature_engineering
 from components.ai_insights import render_ai_insights
 from components.export_data import render_export
+from components.statistical_insights import render_statistical_insights
 
 # =============================================================================
 # Services
@@ -105,6 +106,9 @@ if df is not None:
     # -------------------------------------------------------------------------
 
     render_outlier_dashboard(df)
+    # Statistical Intelligence
+    render_statistical_insights(df)
+
 
     # -------------------------------------------------------------------------
     # Data Cleaning Studio
