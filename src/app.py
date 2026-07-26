@@ -19,6 +19,9 @@ from components.feature_engineering import render_feature_engineering
 from components.ai_insights import render_ai_insights
 from components.export_data import render_export
 from components.statistical_insights import render_statistical_insights
+from components.header import render_header
+from components.sidebar import render_sidebar
+from components.executive_dashboard import render_executive_dashboard
 
 # =============================================================================
 # Services
@@ -36,13 +39,13 @@ st.set_page_config(
     page_icon="📊",
     layout="wide"
 )
+render_sidebar()
 
 # =============================================================================
 # Header
 # =============================================================================
 
-st.title("📊 InsightX")
-st.subheader("Intelligent Data Analytics Dashboard")
+render_header()
 
 # =============================================================================
 # Upload Dataset
@@ -59,7 +62,7 @@ if df is not None:
     # -------------------------------------------------------------------------
     # Dataset Preview
     # -------------------------------------------------------------------------
-
+    render_executive_dashboard(df)
     st.subheader("📄 Dataset Preview")
     st.dataframe(df, use_container_width=True)
 
@@ -133,7 +136,3 @@ if df is not None:
     # -------------------------------------------------------------------------
 
     render_export(featured_df)
-
-else:
-
-    st.info("👆 Upload a CSV or Excel file to begin.")
