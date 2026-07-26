@@ -7,11 +7,11 @@ def render_data_cleaning(df: pd.DataFrame):
     Data Cleaning Studio
     """
 
-    st.write("# 🧹 Data Cleaning Studio")
+    st.header("🧹 Data Cleaning Studio")
 
-    # ==========================================================
-    # Store cleaned dataframe in Session State
-    # ==========================================================
+    # ---------------------------------------------------------
+    # Store cleaned dataframe
+    # ---------------------------------------------------------
 
     if "cleaned_df" not in st.session_state:
         st.session_state.cleaned_df = df.copy()
@@ -20,23 +20,23 @@ def render_data_cleaning(df: pd.DataFrame):
 
     st.info("Choose the cleaning operations you want to perform.")
 
-    # ==========================================================
+    # =========================================================
     # Remove Duplicate Rows
-    # ==========================================================
+    # =========================================================
 
-    st.write("## 🗑️ Remove Duplicate Rows")
+    st.subheader("🗑 Remove Duplicate Rows")
 
-    duplicate_rows = cleaned_df.duplicated().sum()
+    duplicate_rows = int(cleaned_df.duplicated().sum())
 
     st.metric(
         "Duplicate Rows Found",
-        int(duplicate_rows)
+        duplicate_rows
     )
 
     remove_duplicates = st.checkbox(
-    "Remove duplicate rows",
-    key="remove_duplicates_checkbox"
-)
+        "Remove duplicate rows",
+        key="remove_duplicates_checkbox"
+    )
 
     if remove_duplicates:
 
@@ -53,17 +53,17 @@ def render_data_cleaning(df: pd.DataFrame):
             len(cleaned_df)
         )
 
-       # ==========================================================
+    # =========================================================
     # Missing Value Treatment
-    # ==========================================================
+    # =========================================================
 
-    st.write("## 🩹 Missing Value Treatment")
+    st.subheader("🩹 Missing Value Treatment")
 
-    total_missing = cleaned_df.isnull().sum().sum()
+    total_missing = int(cleaned_df.isnull().sum().sum())
 
     st.metric(
         "Total Missing Values",
-        int(total_missing)
+        total_missing
     )
 
     if total_missing == 0:
@@ -72,39 +72,76 @@ def render_data_cleaning(df: pd.DataFrame):
 
     else:
 
-        st.info(
-            "Click the button below to automatically fill all missing values."
+        method = st.selectbox(
+            "Select Missing Value Treatment",
+            [
+                "Mean",
+                "Median",
+                "Mode"
+            ],
+            key="missing_value_method"
         )
 
-        if st.button("🚀 Auto Clean Missing Values"):
+        numeric_columns = cleaned_df.select_dtypes(
+            include=["number"]
+        ).columns.tolist()
 
-            # Fill numeric columns with median
-            numeric_columns = cleaned_df.select_dtypes(
-                include=["number"]
-            ).columns
+        if method in ["Mean", "Median"]:
+            available_columns = numeric_columns
+        else:
+            available_columns = cleaned_df.columns.tolist()
 
-            for column in numeric_columns:
+        selected_columns = st.multiselect(
+            "Select Columns",
+            available_columns,
+            key="missing_value_columns"
+        )
 
-                cleaned_df[column] = cleaned_df[column].fillna(
-                    cleaned_df[column].median()
+        if st.button(
+            "🚀 Apply Cleaning",
+            key="apply_missing_value_treatment"
+        ):
+
+            if len(selected_columns) == 0:
+
+                st.warning(
+                    "Please select at least one column."
                 )
 
-            # Fill categorical columns with mode
-            categorical_columns = cleaned_df.select_dtypes(
-                exclude=["number"]
-            ).columns
+            else:
 
-            for column in categorical_columns:
+                for column in selected_columns:
 
-                if not cleaned_df[column].mode().empty:
+                    if method == "Mean":
 
-                    cleaned_df[column] = cleaned_df[column].fillna(
-                        cleaned_df[column].mode()[0]
-                    )
+                        cleaned_df[column] = cleaned_df[column].fillna(
+                            cleaned_df[column].mean()
+                        )
 
-            remaining_missing = cleaned_df.isnull().sum().sum()
+                    elif method == "Median":
 
-            st.success(
-                f"✅ Missing value treatment completed.\n\nRemaining Missing Values: {remaining_missing}"
-            )
+                        cleaned_df[column] = cleaned_df[column].fillna(
+                            cleaned_df[column].median()
+                        )
+
+                    elif method == "Mode":
+
+                        mode = cleaned_df[column].mode()
+
+                        if not mode.empty:
+
+                            cleaned_df[column] = cleaned_df[column].fillna(
+                                mode[0]
+                            )
+
+                st.session_state.cleaned_df = cleaned_df
+
+                remaining_missing = int(
+                    cleaned_df.isnull().sum().sum()
+                )
+
+                st.success(
+                    f"✅ Missing value treatment completed successfully.\n\nRemaining Missing Values: {remaining_missing}"
+                )
+
     return cleaned_df

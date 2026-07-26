@@ -22,6 +22,8 @@ from components.statistical_insights import render_statistical_insights
 from components.header import render_header
 from components.sidebar import render_sidebar
 from components.executive_dashboard import render_executive_dashboard
+from components.dashboard_overview import render_dashboard_overview
+from reports.pdf_generator import generate_pdf_report
 
 # =============================================================================
 # Services
@@ -63,6 +65,7 @@ if df is not None:
     # Dataset Preview
     # -------------------------------------------------------------------------
     render_executive_dashboard(df)
+    render_dashboard_overview(df)
     st.subheader("📄 Dataset Preview")
     st.dataframe(df, use_container_width=True)
 
@@ -136,3 +139,19 @@ if df is not None:
     # -------------------------------------------------------------------------
 
     render_export(featured_df)
+    st.markdown("## 📄 Executive PDF Report")
+
+if st.button("Generate Executive Report"):
+
+    pdf_path = generate_pdf_report(featured_df)
+
+    st.success("✅ Report generated successfully!")
+
+    with open(pdf_path, "rb") as pdf:
+
+        st.download_button(
+            label="⬇ Download PDF Report",
+            data=pdf,
+            file_name="InsightX_Report.pdf",
+            mime="application/pdf",
+        )
