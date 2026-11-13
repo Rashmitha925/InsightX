@@ -47,3 +47,21 @@ __pycache__/
 # ----------------------------
 Thumbs.db
 .DS_Store
+
+# InsightX Agent - Environment and Secrets
+.env
+.env.*
+!.env.example
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Python testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary dependency downloads
+temp_dependency_check/
