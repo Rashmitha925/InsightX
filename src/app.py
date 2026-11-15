@@ -1,3 +1,4 @@
+
 import streamlit as st
 
 # =============================================================================
@@ -5,6 +6,7 @@ import streamlit as st
 # =============================================================================
 
 from components.uploader import upload_dataset
+from components.agent_chat import render_agent_chat
 
 from components.summary_cards import render_summary
 from components.quality_cards import render_quality_report
@@ -23,6 +25,7 @@ from components.header import render_header
 from components.sidebar import render_sidebar
 from components.executive_dashboard import render_executive_dashboard
 from components.dashboard_overview import render_dashboard_overview
+
 from reports.pdf_generator import generate_pdf_report
 
 # =============================================================================
@@ -41,6 +44,7 @@ st.set_page_config(
     page_icon="📊",
     layout="wide"
 )
+
 render_sidebar()
 
 # =============================================================================
@@ -64,10 +68,18 @@ if df is not None:
     # -------------------------------------------------------------------------
     # Dataset Preview
     # -------------------------------------------------------------------------
+
     render_executive_dashboard(df)
     render_dashboard_overview(df)
+
     st.subheader("📄 Dataset Preview")
     st.dataframe(df, use_container_width=True)
+
+    # -------------------------------------------------------------------------
+    # InsightX Agent Assistant
+    # -------------------------------------------------------------------------
+
+    render_agent_chat(df)
 
     # -------------------------------------------------------------------------
     # Dataset Summary
@@ -112,9 +124,12 @@ if df is not None:
     # -------------------------------------------------------------------------
 
     render_outlier_dashboard(df)
-    # Statistical Intelligence
-    render_statistical_insights(df)
 
+    # -------------------------------------------------------------------------
+    # Statistical Intelligence
+    # -------------------------------------------------------------------------
+
+    render_statistical_insights(df)
 
     # -------------------------------------------------------------------------
     # Data Cleaning Studio
@@ -139,19 +154,24 @@ if df is not None:
     # -------------------------------------------------------------------------
 
     render_export(featured_df)
+
+    # -------------------------------------------------------------------------
+    # Executive PDF Report
+    # -------------------------------------------------------------------------
+
     st.markdown("## 📄 Executive PDF Report")
 
-if st.button("Generate Executive Report"):
+    if st.button("Generate Executive Report"):
 
-    pdf_path = generate_pdf_report(featured_df)
+        pdf_path = generate_pdf_report(featured_df)
 
-    st.success("✅ Report generated successfully!")
+        st.success("✅ Report generated successfully!")
 
-    with open(pdf_path, "rb") as pdf:
+        with open(pdf_path, "rb") as pdf:
 
-        st.download_button(
-            label="⬇ Download PDF Report",
-            data=pdf,
-            file_name="InsightX_Report.pdf",
-            mime="application/pdf",
-        )
+            st.download_button(
+                label="⬇ Download PDF Report",
+                data=pdf,
+                file_name="InsightX_Report.pdf",
+                mime="application/pdf",
+            )
